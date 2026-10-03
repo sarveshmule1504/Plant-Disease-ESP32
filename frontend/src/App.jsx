@@ -127,7 +127,7 @@ function App() {
       ]);
     } catch (error) {
       console.error('Analysis failed:', error);
-      alert('Analysis failed. Is the Node.js backend running?');
+      alert('Analysis failed. Error: ' + error.message);
     } finally {
       setIsAnalyzing(false);
       setLoadingStatus('');
