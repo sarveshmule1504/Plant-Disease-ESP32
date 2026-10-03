@@ -6,9 +6,8 @@ function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [isFlashOn, setIsFlashOn] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [loadingStatus, setLoadingStatus] = useState(''); // Realtime status
-  
-  // New State variables
+  const [loadingStatus, setLoadingStatus] = useState('');
+  const [isChatLoading, setIsChatLoading] = useState(false); // New Chat Loading State
   const [resolution, setResolution] = useState(5);
   const [cropType, setCropType] = useState('Unknown');
   const [brightness, setBrightness] = useState(0);
@@ -149,13 +148,14 @@ function App() {
 
   const handleChatSubmit = async (e) => {
     e.preventDefault();
-    if(!chatMessage.trim()) return;
+    if(!chatMessage.trim() || isChatLoading) return;
     
     // Add user msg
     const newHistory = [...chatHistory, { sender: 'user', text: chatMessage }];
     setChatHistory(newHistory);
     const messageToSend = chatMessage;
     setChatMessage('');
+    setIsChatLoading(true); // Start loading
     
     try {
       const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
@@ -169,12 +169,17 @@ function App() {
         })
       });
       
-      if (response.ok) {
-        const data = await response.json();
-        setChatHistory([...newHistory, { sender: 'ai', text: data.reply }]);
+      if (!response.ok) {
+         throw new Error('Backend returned ' + response.status);
       }
+      
+      const data = await response.json();
+      setChatHistory([...newHistory, { sender: 'ai', text: data.reply }]);
+      
     } catch (error) {
-      setChatHistory([...newHistory, { sender: 'ai', text: "Sorry, I couldn't connect to the backend server." }]);
+      setChatHistory([...newHistory, { sender: 'ai', text: "Sorry, I couldn't connect to the backend server. Error: " + error.message }]);
+    } finally {
+      setIsChatLoading(false); // Stop loading
     }
   };
 
@@ -364,6 +369,12 @@ function App() {
                       {msg.text}
                     </div>
                   ))}
+                  
+                  {isChatLoading && (
+                    <div className="chat-bubble ai" style={{opacity: 0.7, fontStyle: 'italic'}}>
+                      Gemini is typing...
+                    </div>
+                  )}
                 </div>
                 <form onSubmit={handleChatSubmit} className="chat-input-area">
                   <input 
@@ -371,8 +382,11 @@ function App() {
                     placeholder="Ask Gemini a follow-up..." 
                     value={chatMessage}
                     onChange={(e) => setChatMessage(e.target.value)}
+                    disabled={isChatLoading}
                   />
-                  <button type="submit" className="btn btn-primary" style={{padding: '0.5rem 1rem'}}>Send</button>
+                  <button type="submit" className="btn btn-primary" style={{padding: '0.5rem 1rem'}} disabled={isChatLoading}>
+                    {isChatLoading ? '...' : 'Send'}
+                  </button>
                 </form>
               </div>
             </>
