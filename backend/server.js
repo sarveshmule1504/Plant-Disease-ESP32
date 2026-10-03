@@ -59,7 +59,7 @@ app.post('/api/analyze', async (req, res) => {
 
     // 3. Call the Gemini API with the image
     const geminiResponse = await ai.models.generateContent({
-        model: 'gemini-3.8-flash',
+        model: 'gemini-flash-latest',
         contents: [
             {
                 role: 'user',
@@ -116,7 +116,7 @@ Answer concisely, helpfully, and practically. Do not use more than 3-4 sentences
         `;
         
         const geminiResponse = await ai.models.generateContent({
-            model: 'gemini-3.8-flash',
+            model: 'gemini-flash-latest',
             contents: chatPrompt
         });
         
