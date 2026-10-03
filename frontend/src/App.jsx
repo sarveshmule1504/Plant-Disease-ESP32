@@ -108,7 +108,8 @@ function App() {
       });
       
       if (!response.ok) {
-        throw new Error("Backend analysis failed");
+        const errorBody = await response.json().catch(() => ({}));
+        throw new Error(errorBody.details || errorBody.error || `Backend returned status ${response.status}`);
       }
       
       setLoadingStatus('Parsing AI Diagnosis...');
