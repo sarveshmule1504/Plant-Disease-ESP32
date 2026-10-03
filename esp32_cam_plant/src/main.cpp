@@ -264,8 +264,17 @@ void setup() {
     sensor_t* s = esp_camera_sensor_get();
     if(s) s->set_framesize(s, FRAMESIZE_QVGA);
 
-    // Connect to WiFi
+    // Connect to WiFi with STATIC IP!
+    // Change these if your router uses a different subnet (e.g. 192.168.0.x)
+    IPAddress staticIP(192, 168, 1, 200);   // The IP you want the ESP32 to always have
+    IPAddress gateway(192, 168, 1, 1);       // Your router's IP (usually .1)
+    IPAddress subnet(255, 255, 255, 0);
+    IPAddress dns(8, 8, 8, 8);               // Google DNS
+    
     WiFi.mode(WIFI_STA);
+    if (!WiFi.config(staticIP, gateway, subnet, dns)) {
+        Serial.println("[WiFi] Static IP config FAILED! Falling back to DHCP.");
+    }
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     Serial.printf("[WiFi] Connecting to '%s'...\n", WIFI_SSID);
     
@@ -275,7 +284,7 @@ void setup() {
     }
     
     WiFi.setSleep(false); // Disable WiFi power save for smooth streaming!
-    Serial.printf("\n[WiFi] Connected! IP: %s\n", WiFi.localIP().toString().c_str());
+    Serial.printf("\n[WiFi] Connected! Static IP: %s\n", WiFi.localIP().toString().c_str());
 
     // Start SINGLE HTTP Server on port 80 to avoid socket limit errors
     httpd_config_t serverCfg = HTTPD_DEFAULT_CONFIG();
