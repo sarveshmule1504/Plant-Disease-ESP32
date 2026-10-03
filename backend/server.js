@@ -56,7 +56,7 @@ app.post('/api/analyze', async (req, res) => {
 
     // Call Groq API with vision model
     const chatCompletion = await groq.chat.completions.create({
-      model: "llama-3.2-90b-vision-preview",
+      model: "qwen/qwen3.8-27b",
       messages: [
         {
           role: "system",
@@ -113,7 +113,7 @@ app.post('/api/chat', async (req, res) => {
     
     try {
         const chatCompletion = await groq.chat.completions.create({
-            model: "llama-3.3-70b-versatile",
+            model: "openai/gpt-oss-20b",
             messages: [
                 {
                     role: "system",
