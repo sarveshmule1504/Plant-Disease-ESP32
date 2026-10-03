@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '10mb' })); // Increased limit for high-res base64 images
+app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
 
@@ -57,41 +57,28 @@ app.post('/api/analyze', async (req, res) => {
       
     const prompt = `${cropContext} Analyze this leaf and provide the JSON diagnosis.`;
 
-    // 3. Call the Gemini API with the image (with automatic retries)
-    let geminiResponse;
-    let retries = 3;
-    
-    while (retries > 0) {
-        try {
-            geminiResponse = await ai.models.generateContent({
-                model: 'gemini-flash-latest',
-                contents: [
+    // 3. Call the Gemini API with the image
+    const geminiResponse = await ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: [
+            {
+                role: 'user',
+                parts: [
                     {
-                        role: 'user',
-                        parts: [
-                            {
-                                inlineData: {
-                                    data: base64Data,
-                                    mimeType: 'image/jpeg'
-                                }
-                            },
-                            { text: prompt }
-                        ]
-                    }
-                ],
-                config: {
-                    systemInstruction: SYSTEM_INSTRUCTION,
-                    temperature: 0.2, // Low temperature for factual, deterministic analysis
-                }
-            });
-            break; // Success
-        } catch (apiErr) {
-            console.error(`Gemini API Error (Retries left: ${retries - 1}):`, apiErr.message);
-            retries--;
-            if (retries === 0) throw apiErr;
-            await new Promise(r => setTimeout(r, 2000));
+                        inlineData: {
+                            data: base64Data,
+                            mimeType: 'image/jpeg'
+                        }
+                    },
+                    { text: prompt }
+                ]
+            }
+        ],
+        config: {
+            systemInstruction: SYSTEM_INSTRUCTION,
+            temperature: 0.2, // Low temperature for factual, deterministic analysis
         }
-    }
+    });
 
     const aiText = geminiResponse.text;
     console.log("[Backend] Gemini Response:", aiText);
@@ -129,7 +116,7 @@ Answer concisely, helpfully, and practically. Do not use more than 3-4 sentences
         `;
         
         const geminiResponse = await ai.models.generateContent({
-            model: 'gemini-flash-latest',
+            model: 'gemini-3.8-flash',
             contents: chatPrompt
         });
         
