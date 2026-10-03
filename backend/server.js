@@ -57,28 +57,41 @@ app.post('/api/analyze', async (req, res) => {
       
     const prompt = `${cropContext} Analyze this leaf and provide the JSON diagnosis.`;
 
-    // 3. Call the Gemini API with the image
-    const geminiResponse = await ai.models.generateContent({
-        model: 'gemini-flash-latest',
-        contents: [
-            {
-                role: 'user',
-                parts: [
+    // 3. Call the Gemini API with the image (with automatic retries)
+    let geminiResponse;
+    let retries = 3;
+    
+    while (retries > 0) {
+        try {
+            geminiResponse = await ai.models.generateContent({
+                model: 'gemini-flash-latest',
+                contents: [
                     {
-                        inlineData: {
-                            data: base64Data,
-                            mimeType: 'image/jpeg'
-                        }
-                    },
-                    { text: prompt }
-                ]
-            }
-        ],
-        config: {
-            systemInstruction: SYSTEM_INSTRUCTION,
-            temperature: 0.2, // Low temperature for factual, deterministic analysis
+                        role: 'user',
+                        parts: [
+                            {
+                                inlineData: {
+                                    data: base64Data,
+                                    mimeType: 'image/jpeg'
+                                }
+                            },
+                            { text: prompt }
+                        ]
+                    }
+                ],
+                config: {
+                    systemInstruction: SYSTEM_INSTRUCTION,
+                    temperature: 0.2, // Low temperature for factual, deterministic analysis
+                }
+            });
+            break; // Success
+        } catch (apiErr) {
+            console.error(`Gemini API Error (Retries left: ${retries - 1}):`, apiErr.message);
+            retries--;
+            if (retries === 0) throw apiErr;
+            await new Promise(r => setTimeout(r, 2000));
         }
-    });
+    }
 
     const aiText = geminiResponse.text;
     console.log("[Backend] Gemini Response:", aiText);
