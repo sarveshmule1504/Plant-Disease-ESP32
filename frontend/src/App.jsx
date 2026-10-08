@@ -137,14 +137,22 @@ function App() {
 
   const downloadReport = () => {
     if (!reportRef.current) return;
-    const opt = {
-      margin:       1,
-      filename:     'Plant_Diagnosis_Report.pdf',
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true },
-      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-    html2pdf().from(reportRef.current).set(opt).save();
+    try {
+      const opt = {
+        margin:       1,
+        filename:     'Plant_Diagnosis_Report.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      html2pdf().from(reportRef.current).set(opt).save().catch(err => {
+        console.error('PDF Error:', err);
+        alert('Failed to generate PDF. You can press Ctrl+P to print/save as PDF instead.');
+      });
+    } catch (error) {
+      console.error('html2pdf setup error:', error);
+      alert('PDF library failed to load. Please press Ctrl+P to print/save as PDF instead.');
+    }
   };
 
   const handleChatSubmit = async (e) => {
