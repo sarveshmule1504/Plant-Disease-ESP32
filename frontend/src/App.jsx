@@ -308,7 +308,7 @@ function App() {
                  <img src={capturedImage} alt="Captured Leaf" style={{width: '100%', display: 'block'}} />
                </div>
                <button className="btn btn-primary" style={{width: '100%'}} onClick={analyzeImage}>
-                 ✨ Analyze with Gemini AI
+                 ✨ Analyze with  AI
                </button>
             </div>
           )}
