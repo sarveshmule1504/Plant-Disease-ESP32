@@ -98,7 +98,7 @@ function App() {
   const analyzeImage = async () => {
     if (!capturedImage) return;
     setIsAnalyzing(true);
-    setLoadingStatus('Sending to Gemini AI for Analysis...');
+    setLoadingStatus('Sending to  AI for Analysis...');
 
     try {
       const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
@@ -376,7 +376,7 @@ function App() {
                 <form onSubmit={handleChatSubmit} className="chat-input-area">
                   <input 
                     type="text" 
-                    placeholder="Ask Gemini a follow-up..." 
+                    placeholder="Ask AI a follow-up..." 
                     value={chatMessage}
                     onChange={(e) => setChatMessage(e.target.value)}
                   />
