@@ -1,6 +1,6 @@
 # Plant Disease ESP32
 
-An ESP32-based smart agriculture system that captures leaf images, analyzes them with AI, and helps detect plant diseases using computer vision and environmental sensor data. The project combines embedded hardware, a backend API, and a web dashboard to provide a complete end-to-end workflow for plant health monitoring.
+An ESP32-based smart agriculture system that captures leaf images, analyzes them with AI, and helps detect plant diseases using computer vision and environmental sensor data. The project combines embedded hardware, a backend API, and a web dashboard to provide practical plant health insights.
 
 This repository includes:
 
@@ -12,7 +12,7 @@ This repository includes:
 
 ## Why this project?
 
-Early detection of plant disease is essential for preventing crop loss, improving yield, and reducing unnecessary pesticide use. This project demonstrates how low-cost embedded devices and AI can be combined to classify leaf diseases, provide symptom explanations, and suggest treatment steps.
+Early detection of plant disease is essential for preventing crop loss, improving yield, and reducing unnecessary pesticide use. This project demonstrates how low-cost embedded devices and AI can work together for real-world agricultural monitoring.
 
 ## System Overview
 
@@ -121,6 +121,10 @@ Plant-Disease-ESP32/
 - Groq-hosted inference models
 - Image-based plant disease diagnosis
 - Follow-up support chat based on diagnosed crop condition
+
+### Models Used
+- Disease diagnosis model: `qwen/qwen3.8-27b` (Groq vision model for leaf image analysis)
+- Follow-up chat model: `openai/gpt-oss-20b` (Groq chat model for plant care recommendations)
 
 ## Prerequisites
 
@@ -312,7 +316,7 @@ This project does not currently include a dedicated license file. If you plan to
 
 ## Project Summary
 
-Plant Disease ESP32 is a practical example of using embedded devices and AI for agricultural decision support. It brings together computer vision, hardware monitoring, and web-based analysis into a single system that can help detect plant health issues early and recommend action.
+Plant Disease ESP32 is a practical example of using embedded devices and AI for agricultural decision support. It brings together computer vision, hardware monitoring, and web-based analysis into a cohesive solution for disease detection.
 
 If you want to extend the project further, good next steps include:
 
@@ -321,4 +325,3 @@ If you want to extend the project further, good next steps include:
 - generating PDF reports for users
 - adding a mobile app interface
 - improving sensor-driven disease risk analysis
-
